@@ -1,0 +1,11 @@
+{ HEAD
+rebase dev to master 1
+=======
+rebase 1
+rebase 2
+<<<<<<< HEAD
+>>>>>>> master reabse2
+}
+=======
+rebase 3`
+>>>>>>> dev rebase3
