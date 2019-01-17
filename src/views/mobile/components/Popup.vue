@@ -1,11 +1,16 @@
 <template>
   <div class="popup" v-if="visible">
-    <div class="bg" @click="$emit('input')">{{visible+ animate}}</div>
-    <div v-if="type == 'pop'" class="pop" :class="{animationShow: animationShow,bottom: animate == 'bottom',left: animate == 'left',right: animate == 'right'}">
-      {{type}}
+    <div class="bg" @click="$emit('input')"></div>
+    <div v-if="type == 'pop'" class="pop" :class="{animation: animation,bottom: animate == 'bottom',left: animate == 'left',right: animate == 'right'}">
+      <div class="close"> </div>
+      <slot></slot>
     </div>
-    <div v-if="type == 'dialog'" class="dialog" :class="{animationShow: animationShow,bottom: animate == 'bottom',left: animate == 'left',right: animate == 'right',top: animate == 'top'}">
-      {{type}}
+    <div v-if="type == 'dialog'" class="dialog" :class="{animation: animation}">
+      <div class="close" @click="$emit('input')"> </div>
+      <!-- <div class="title" v-if="title">
+        {{title}}
+      </div> -->
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -26,25 +31,30 @@ export default {
     },
     animate: {// enum: bottom left right
       type: String,
-      default: "bottom",
+      default: "top",
+    },
+    title: {
+      type: String,
+      default: ""
     }
   },
   data () {
     return {
       visible: false,
-      animationShow: false,
+      animation: false,
       animationTime: 300,// 提前结束  不卡顿
     };
   },
   watch: {
     value (newVal) {
       if (newVal) {
-        setTimeout(() => {
-          this.setData({animationShow: true});
-        },0)
         this.setData({visible: true});
+        // 延时执行，确保加载完dom
+        setTimeout(() => {
+          this.setData({animation: true});
+        },30)
       } else {
-        this.setData({animationShow: false});
+        this.setData({animation: false});
         setTimeout(() => {
           this.setData({visible: false,});
         }, this.animationTime)
@@ -56,6 +66,8 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "../../base.less";
+
   .popup {
     position: fixed;
     top: 0;
@@ -73,32 +85,20 @@ export default {
   }
   .dialog {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 50%;
     left: 0;
     right: 0;
     margin: auto;
     width: 80%;
-    height: 100px;
-    border-radius: 5px;
+    min-height: 100px;
+    border-radius: @radius;
     background: white;
     transition: transform .3s;
     opacity: .3;
-    &.top {
-      transform: translateY(-20px);
-    }
-    &.bottom {
-      transform: translateY(20px);
-    }
-    &.left {
-      transform: translateX(20px);
-    }
-    &.right {
-      transform: translateX(-20px);
-    }
-    &.animationShow {
+    transform: translateY(-50%) scale(0);
+    &.animation {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateY(-50%) scale(1);
     }
   }
   .pop {
@@ -118,9 +118,46 @@ export default {
     &.right {
       transform: translateX(-100%);
     }
-    &.animationShow {
+    &.animation {
       transform: translateX(0);
     }
-
+  }
+  .title {
+    position: relative;
+    text-align: center;
+    font-size: @fs-l;
+    padding-top: 5px;
+  }
+  @iconHeight: 14px;
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: @iconHeight;
+    height: @iconHeight;
+    &::before {
+      position: absolute;
+      top: @iconHeight/2;
+      left: 0;
+      display: block;
+      content: " ";
+      transform: rotate(50deg);
+      width: @iconHeight;
+      height: 2PX;
+      border-radius: 2PX;
+      background: #666;
+    }
+    &::after {
+      position: absolute;
+      top: @iconHeight/2;
+      left: 0;
+      display: block;
+      content: " ";
+      transform: rotate(-50deg);
+      width: @iconHeight;
+      height: 2PX;
+      border-radius: 2PX;
+      background: #666;
+    }
   }
 </style>

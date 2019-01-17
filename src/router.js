@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import MobileRouter from "./mobileRouter"
 import PCRouter from "./pcRouter"
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',

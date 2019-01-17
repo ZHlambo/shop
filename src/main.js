@@ -19,6 +19,11 @@ Vue.mixin({
   }
 });
 
+router.beforeEach((to, from, next) => {
+  document.title = to.name;
+  next();
+})
+
 new Vue({
   router,
   store,

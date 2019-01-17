@@ -1,3 +1,7 @@
+export const checkMobile = (mobile) => {
+  return new RegExp('^((13[0-9])|(14[0-9])|(15([0-9]))|(166)|(17[0-9])|(18[0-9])|(19[8,9]))\\d{8}$').test(mobile)
+}
+
 export const toast = (msg, time = 3000) => {
   let dismissTime = 300
   let node = document.createElement("div");
@@ -101,6 +105,7 @@ export const formatDate = (time, format) => {
 
 
 export default {
+  checkMobile,
   formatDate,
   webEnv,
   toast,

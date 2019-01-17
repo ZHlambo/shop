@@ -1,6 +1,7 @@
-@btn-theme: linear-gradient(#fc0,#ffb400);
-@theme: #ffcc00;
-@theme-sub: #F48F19;
+@theme: #FCED4E;
+@theme-bg: #88ED4E10;
+@theme-sub: #88ED4E;
+@color-red: #F24C38;
 @color-99: #999;
 @color-66: #666;
 @color-33: #333;
@@ -8,11 +9,12 @@
 @color-dd: #ddd;
 @color-ee: #eee;
 @bg: #fcfcfc;
-@bd: #dadada;
+@bd: #ebebeb;
 @fs-xl: 18px;
 @fs-l: 16px;
 @fs-n: 14px;
-@fs-s: 10px;
+@fs-s: 12px;
+@fs-xs: 10px;
 @space-60: 60px;
 @space-50: 50px;
 @space-40: 40px;
@@ -20,6 +22,7 @@
 @space-20: 20px;
 @space-10: 10px;
 @space-5: 5px;
+@radius: 4px;
 @btn-height: 50px;
 @border: 1PX solid @bd;
 
@@ -59,17 +62,36 @@
   background: @theme;
   text-align: center;
   color: @color-33;
-  border-radius: 12px;
-  line-height: 25px;
+  border-radius: 25px;
   height: 25px;
   padding: 0 @space-10;
+  border: 0;
   &:active {
     background: @theme-sub;
   }
-}
-.btn-cell {
-  background: @btn-theme;
-  line-height: 46px;
+  &.btn-cell {
+    display: block;
+    width: 100%;
+    border-radius: 46px;
+    height: 46px;
+    background: @theme;
+    font-size: @fs-l;
+    font-weight: bold;
+  }
+  &.loading {
+    &::before {
+      display: inline-block;
+      content: " ";
+      height: 16px;
+      width: 16px;
+      margin-right: 5px;
+      vertical-align: top;
+      animation: my-rotate 0.8s infinite linear;
+      border: 2px solid transparent;
+      border-color: #ddd transparent #ddd #ddd;
+      border-radius: 50%;
+    }
+  }
 }
 .btn-bottom {
   position: fixed;
@@ -77,7 +99,7 @@
   bottom: 0;
   left: 0;
   text-align: center;
-  background: @btn-theme;
+  background: @theme;
   font-weight: bold;
   line-height: @btn-height;
   height: @btn-height;

@@ -244,16 +244,20 @@ module.exports = [
     children: [
       {
         name: "雪碧瓶装",
-        price: 3.5
+        price: 3.5,
+        attr: [{name: "罐", price: 3.5}]
       }, {
         name: "百事瓶装",
-        price: 3.5
+        price: 3.5,
+        attr: [{name: "罐", price: 3.5}]
       }, {
         name: "雪碧罐装",
-        price: 3
+        price: 3,
+        attr: [{name: "罐", price: 3}]
       }, {
         name: "百事罐装",
-        price: 3
+        price: 3,
+        attr: [{name: "罐", price: 3}]
       }
     ]
   }

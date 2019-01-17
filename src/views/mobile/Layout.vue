@@ -41,6 +41,7 @@ export default {
       this.name = newVal.name
       this.showRight = true
       this.noHeader = newVal.meta.noHeader
+      document.title = newVal.name
       this.$utils.loading.close();
     },
   },

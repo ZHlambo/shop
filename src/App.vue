@@ -13,10 +13,13 @@ body,html {
   color: @color-33;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-ul, li {
+ul, li, input, textarea, button {
   padding: 0;
   margin: 0;
   list-style: none;
+  line-height: normal;
+  border: 0;
+  outline: none;
 }
 
 

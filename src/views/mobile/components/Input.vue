@@ -41,10 +41,10 @@ export default {
 
 input {
   width: 100%;
-  font-size: @fs-14;
+  font-size: 14px;
   border-bottom: 1px solid @color-99;
   padding-right: @space-40;
-  padding: @space-30 0;
+  padding: @space-20 0;
   &:focus {
     border-bottom-color: @color-33;
   }
