@@ -1,14 +1,13 @@
 <template>
   <div class="layout">
-    <div v-if="!noHeader" class="header border-bottom">
+    <!-- <div v-if="!noHeader" class="header border-bottom">
       <span class="left"> </span>
       <span>{{name}}</span>
       <span class="right" v-if="showRight">
-        <!-- <img src="../../assets/img/personal.png" @click="$router.push('/customer/mobile/personal')"alt=""> -->
       </span>
       <span class="right" v-else></span>
-    </div>
-    <div class="mobileBody" :class="{noMargin: noHeader}">
+    </div> -->
+    <div class="mobileBody">
       <router-view @setHeader="setHeader"></router-view>
     </div>
   </div>
@@ -93,15 +92,11 @@ export default {
 }
 .mobileBody {
   position: absolute;
-  top: 43px;
+  top: 0;
   left: 0;
   bottom: 0;
-  height: calc(100% - 43px);
+  height: 100%;
   width: 100%;
   overflow: auto;
-}
-.noMargin {
-  top: 0;
-  height: 100%;
 }
 </style>

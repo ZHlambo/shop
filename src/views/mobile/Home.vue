@@ -24,7 +24,21 @@ export default {
   data () {
     return {
       show: false,
-      dataSource,
+      dataSource: (function(){
+        let data = JSON.parse(JSON.stringify(dataSource));
+        let arr = [];
+        arr = data.map(item => {
+          item.children = item.children.map(sku => {
+            let obj = [];
+            obj = sku.attr.map(attr => {
+              return {...sku, attrData: attr};
+            })
+            return obj;
+          })
+          return item;
+        })
+        return arr;
+      })(),
       filters: [
         {name:"点菜"},
         {name:"评论"},

@@ -9,17 +9,17 @@
           <h3>
             {{data.name}}
           </h3>
-          <li v-for="(item, productIndex) in data.children" :key="productIndex" class="product">
+          <li v-for="(item, skuIndex) in data.children" :key="skuIndex" class="sku">
             <img :src="item.img" width="80px" height="80px" alt="">
             <div class="info">
-              <div> {{item.name}} </div>
-              <div class="sub"> {{item.desc || "很好吃的哦"}} </div>
+              <div> {{item[0].name}} </div>
+              <div class="sub"> {{item[0].desc || "很好吃的哦"}} </div>
               <!-- <div> {{`月售${10} 赞${0}`}} </div> -->
               <div class="bottom">
-                <span>￥ <span class="price">{{item.price.toFixed(2)}}</span> 起</span>
-                <button v-if="item.attr.length !== 1" class="btn" @click="showPop = true;product = item">选择规格</button>
+                <span>￥ <span class="price">{{item[0].price.toFixed(2)}}</span> 起</span>
+                <button v-if="item.length !== 1" class="btn" @click="skus = item;showPop = true;">选择规格</button>
                 <div v-else>
-                  <Add :value="item.attr[0].num" @input="e => input(e, item)" type="1"/>
+                  <Add :value="item[0].attrData.num" @input="e => input(e, item[0])" type="1"/>
                 </div>
               </div>
             </div>
@@ -27,97 +27,80 @@
         </li>
       </ul>
     </div>
-    <ProductPopup v-model="showPop" :product.sync="product" @input="close" :card.sync="card"/>
+    <SkusPopup v-model="showPop" :skus="skus" @change="e => input(e.attrData.num, e)" @input="showPop = false" :shoppingCar.sync="shoppingCar"/>
+    <ShoppingCar/>
   </div>
 </template>
 
 <script>
-import ProductPopup from "./ProductPopup.vue";
+import {mapActions, mapState} from "vuex";
+import SkusPopup from "./SkusPopup.vue";
+import ShoppingCar from "./ShoppingCar.vue";
 import Add from "./Add.vue";
 
 export default {
   name: 'CategoryList',
   components: {
-    ProductPopup,
-    Add
+    SkusPopup,
+    Add,
+    ShoppingCar
   },
   props: ["dataSource"],
   data () {
     return {
       current: 0,
       showPop: false,
-      product: {},
+      skus: [],
       data: [],
-      card: [],
     }
   },
+  computed: mapState({
+    shoppingCar: state => {
+      return state.shoppingCar;
+    },
+  }),
   watch: {
+    dataSource (dataSource) {
+      this.setData({data: dataSource});
+      return dataSource;
+    },
     data (data) {
       data.forEach(item => {
-        item.children.forEach(e => {
-          e.attr.forEach(attr => {
-            attr.num = attr.num || 0;
+        item.children.forEach(skus => {
+          skus.forEach(sku => {
+            this.shoppingCar.forEach(e => {
+              if (e.id === sku.name + sku.attrData.name) {
+                sku.attrData.num = e.attrData.num;
+              }
+            });
+            sku.attrData.num = sku.attrData.num || 0;
           })
         })
       })
       return data;
     },
-    dataSource (dataSource) {
-      this.setData({data: dataSource});
-      return dataSource;
-    }
   },
   mounted () {
     this.setData({data: this.dataSource});
   },
   methods: {
+    ...mapActions([
+      "changeCar"
+    ]),
     clickItem (index) {
-      console.log(this.card);
       this.current = index;
       this.$refs.right.scrollTo(0, this.$refs[`right${index}`][0].offsetTop);
     },
-    changeId (data) {
-      return data.name + data.attr[0].name;
-    },
     input (num, data) {
       if (num > 3) {
-        data.attr[0].num = 3;
+        data.attrData.num = 3;
         this.$utils.toast("数量达到上限");
         return ;
       }
-      data.attr[0].num = num;
-      let {card} = this;
-      for (let i = 0; i < card.length; i++) {
-        if (card[i].id === this.changeId(data)) {
-          card[i] = {...data, id: this.changeId(data)}
-          break;
-        } else if (i === card.length - 1) {
-          card.push({...data, id: this.changeId(data)})
-        }
-      }
-      this.setData({card});
-      //强制刷新
+      data.attrData.num = num;
+      this.changeCar(data);
       this.data = [].concat(this.data)
     },
-    close () {
-      let {card, product} = this;
-      console.log(product);
-      product.attr.forEach(attr => {
-        if (card.length == 0 && attr.num) {
-          card.push({...product, attr, id: this.changeId(product)});
-          return ;
-        }
-        for (let i = 0; i < card.length; i++) {
-          if (card[i].id === this.changeId(product)) {
-            card[i] = {...product, attr, id: this.changeId(product)}
-            break;
-          } else if (i === card.length - 1) {
-            card.push({...product, attr, id: this.changeId(product)})
-          }
-        }
-      })
-      this.setData({card});
-    }
   },
 }
 </script>
@@ -131,6 +114,7 @@ export default {
   .left {
     height: 100%;
     min-width: 100px;
+    padding-bottom: 50px;
     overflow: auto;
     background: #eee;
     >li {
@@ -144,6 +128,7 @@ export default {
   >.right {
     flex: 1;
     padding: 0 @space-10;
+    padding-bottom: 50px;
     height: 100%;
     overflow: auto;
     position: relative;
@@ -153,7 +138,7 @@ export default {
       border-bottom: @border;
       border-bottom-style: dashed;
     }
-    .product {
+    .sku {
       display: flex;
       margin-bottom: @space-10;
       img {
