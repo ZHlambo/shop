@@ -1,19 +1,19 @@
 <template>
-  <Popup :value="value" @input="$emit('input')" type="dialog" :title="product.name">
-    <div class="body">
-      <div class="header"> {{product.name}} </div>
+  <Popup :value="value" @input="$emit('input')" type="dialog" :title="skus.name">
+    <div class="body" v-if="skus.length">
+      <div class="header"> {{skus[0].name}} </div>
       <div class="tip"> 规格： </div>
       <ul class="attrs">
-        <li v-for="(attr, index) in product.attr" :key="index" :class="{active: selected.name === attr.name}" @click="selected = attr">{{attr.name}}</li>
+        <li v-for="(sku, index) in skus" :key="index" :class="{active: selected.attrData.name === sku.attrData.name}" @click="selected = sku">{{sku.attrData.name}}</li>
       </ul>
       <div class="bottom">
         <span>
           <span class="price">
-            ￥<span>{{Number(selected.price).toFixed(2)}} </span>
+            ￥<span>{{Number(selected.attrData.price).toFixed(2)}} </span>
           </span>
-          <span class="attrName">({{selected.name}})</span>
+          <span class="attrName">({{selected.attrData.name}})</span>
         </span>
-        <Add :value="selected.num" @input="input"/>
+        <Add :value="selected.attrData.num" @input="input"/>
       </div>
     </div>
   </Popup>
@@ -24,12 +24,12 @@ import Popup from "../components/Popup.vue";
 import Add from "./Add.vue";
 
 export default {
-  name: 'ProductPopup',
+  name: 'SkusPopup',
   components: {
     Popup,
     Add
   },
-  props: [ 'value', 'product', 'card', 'placeholder', 'maxlength' ],
+  props: [ 'value', 'skus', 'card', 'placeholder', 'maxlength' ],
   data () {
     return {
       selected: {},
@@ -39,22 +39,22 @@ export default {
   watch: {
     value (value) {
       if (value) {
-        this.setData({selected: this.product.attr[0]})
+        this.setData({selected: this.skus[0]})
       }
       return value;
     },
   },
   methods: {
     input (num) {
-      let {selected, product} = this;
-      selected.num = num;
+      let {selected, skus} = this;
+      selected.attrData.num = num;
       this.setData({selected: Object.assign({}, selected)});
-      product.attr.forEach(item => {
-        if (item.name === selected.name) {
-          item.num = num
+      skus.forEach(sku => {
+        if (sku.attrData.name === selected.attrData.name) {
+          sku.attrData.num = num
+          this.$emit("change", sku);
         }
       });
-      this.$emit("update:product", product);
     },
   }
 }

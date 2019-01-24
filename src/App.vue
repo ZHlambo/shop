@@ -22,6 +22,10 @@ ul, li, input, textarea, button {
   outline: none;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 
 .bodyToast {
   position: fixed;
