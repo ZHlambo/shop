@@ -98,5 +98,6 @@ export default {
   height: 100%;
   width: 100%;
   overflow: auto;
+  background-color: #f2f5f7;
 }
 </style>

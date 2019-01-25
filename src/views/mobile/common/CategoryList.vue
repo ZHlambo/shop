@@ -17,9 +17,12 @@
               <!-- <div> {{`月售${10} 赞${0}`}} </div> -->
               <div class="bottom">
                 <span>￥ <span class="price">{{item[0].price.toFixed(2)}}</span> 起</span>
-                <button v-if="item.length !== 1" class="btn" @click="skus = item;showPop = true;">选择规格</button>
+                <span v-if="item.length !== 1" class="skusBtn">
+                  <span v-if="item.reduce((total, e) => total + e.attrData.num, 0)">{{item.reduce((total, e) => total + e.attrData.num, 0)}}</span>
+                  <button class="btn" @click="skus = item;showPop = true;">选择规格</button>
+                </span>
                 <div v-else>
-                  <Add :value="item[0].attrData.num" @input="e => input(e, item[0])" type="1"/>
+                  <Add :sku="item[0]" type="1"/>
                 </div>
               </div>
             </div>
@@ -27,7 +30,7 @@
         </li>
       </ul>
     </div>
-    <SkusPopup v-model="showPop" :skus="skus" @change="e => input(e.attrData.num, e)" @input="showPop = false" :shoppingCar.sync="shoppingCar"/>
+    <SkusPopup v-model="showPop" :skus="skus" @input="showPop = false"/>
     <ShoppingCar/>
   </div>
 </template>
@@ -69,7 +72,8 @@ export default {
         item.children.forEach(skus => {
           skus.forEach(sku => {
             this.shoppingCar.forEach(e => {
-              if (e.id === sku.name + sku.attrData.name) {
+              sku.id = sku.name + sku.attrData.name;
+              if (e.id === sku.id) {
                 sku.attrData.num = e.attrData.num;
               }
             });
@@ -79,6 +83,33 @@ export default {
       })
       return data;
     },
+    shoppingCar (shoppingCar) {
+      let has = false;
+      this.data.forEach(item => {
+        item.children.forEach(skus => {
+          skus.forEach((sku, index) => {
+            has = false;
+            for (let i = 0; i < shoppingCar.length; i++) {
+              if (shoppingCar[i].id === sku.id) {
+                has = true;
+                if (sku.attrData.num != shoppingCar[i].attrData.num) {
+                  sku.attrData.num = shoppingCar[i].attrData.num;
+                  skus[index] = Object.assign({}, sku);
+                }
+              }
+            }
+            if (!has) {
+              sku.attrData.num = 0
+              skus[index] = Object.assign({}, sku);
+            }
+          })
+        })
+      })
+      this.setData({
+        data: [].concat(this.data)
+      })
+      return shoppingCar;
+    }
   },
   mounted () {
     this.setData({data: this.dataSource});
@@ -90,16 +121,6 @@ export default {
     clickItem (index) {
       this.current = index;
       this.$refs.right.scrollTo(0, this.$refs[`right${index}`][0].offsetTop);
-    },
-    input (num, data) {
-      if (num > 3) {
-        data.attrData.num = 3;
-        this.$utils.toast("数量达到上限");
-        return ;
-      }
-      data.attrData.num = num;
-      this.changeCar(data);
-      this.data = [].concat(this.data)
     },
   },
 }
@@ -149,8 +170,6 @@ export default {
         flex: 1;
         .sub {
           margin-top: @space-5;
-          color: @color-99;
-          font-size: @fs-s;
         }
         .bottom {
           display: flex;
@@ -164,6 +183,21 @@ export default {
           }
           .btn {
             float: right;
+          }
+          .skusBtn {
+            position: relative;
+            >span {
+              position: absolute;
+              top: -4px;
+              right: -4px;
+              background: red;
+              color: white;
+              border-radius: 50%;
+              width: 16px;
+              height: 16px;
+              font-size: @fs-s;
+              text-align: center;
+            }
           }
         }
       }

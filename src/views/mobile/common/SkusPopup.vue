@@ -13,13 +13,14 @@
           </span>
           <span class="attrName">({{selected.attrData.name}})</span>
         </span>
-        <Add :value="selected.attrData.num" @input="input"/>
+        <Add :sku="selected" />
       </div>
     </div>
   </Popup>
 </template>
 
 <script>
+import {mapState} from "vuex";
 import Popup from "../components/Popup.vue";
 import Add from "./Add.vue";
 
@@ -36,6 +37,11 @@ export default {
       dataSource: [],
     }
   },
+  computed: mapState({
+    shoppingCar: state => {
+      return state.shoppingCar;
+    },
+  }),
   watch: {
     value (value) {
       if (value) {
@@ -43,19 +49,12 @@ export default {
       }
       return value;
     },
+    shoppingCar (shoppingCar) {
+      this.setData({selected: Object.assign({}, this.selected)});
+      return shoppingCar;
+    }
   },
   methods: {
-    input (num) {
-      let {selected, skus} = this;
-      selected.attrData.num = num;
-      this.setData({selected: Object.assign({}, selected)});
-      skus.forEach(sku => {
-        if (sku.attrData.name === selected.attrData.name) {
-          sku.attrData.num = num
-          this.$emit("change", sku);
-        }
-      });
-    },
   }
 }
 </script>

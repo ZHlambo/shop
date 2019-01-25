@@ -22,30 +22,33 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    changeCar (context, sku) {
-      context.commit(SHOPPING_CAR, sku);
+    changeCar (context, data) {
+      context.commit(SHOPPING_CAR, data);
     }
   },
   mutations: {
-    [SHOPPING_CAR] (state, payload) {
-      const getId = (data) => {
-        return data.name + data.attrData.name;
-      };
+    [SHOPPING_CAR] (state, {sku, num}) {
+      let obj = JSON.parse(JSON.stringify(sku));
+      if (num > 3) {
+        obj.attrData.num = 3;
+        // this.$utils.toast("数量达到上限");
+        return ;
+      }
+      obj.attrData.num = num;
       let {shoppingCar} = state;
-      payload.id = getId(payload);
       if (shoppingCar.length == 0) {
-        shoppingCar.push(payload)
+        shoppingCar.push(obj)
       } else {
         for (let i = 0; i < shoppingCar.length; i++) {
-          if (shoppingCar[i].id === getId(payload)) {
-            if (payload.attrData.num == 0) {
+          if (shoppingCar[i].id === obj.id) {
+            if (obj.attrData.num == 0) {
               shoppingCar.splice(i, 1);
             } else {
-              shoppingCar[i] = payload
+              shoppingCar[i] = obj;
             }
             break;
           } else if (i === shoppingCar.length - 1) {
-            shoppingCar.push(payload)
+            shoppingCar.push(obj);
           }
         }
       }

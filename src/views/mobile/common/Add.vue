@@ -1,20 +1,21 @@
 <template>
   <div class="">
-     <div v-if="value" class="addNum">
-       <span class="reduce circle" @click="$emit('input', value - 1)">－</span>
-       <span class="circle">{{value}}</span>
-       <span class="btn circle" @click="$emit('input', value + 1)">＋</span>
+     <div v-if="sku.attrData.num" class="addNum">
+       <span class="reduce circle" @click="changeCar({sku, num: sku.attrData.num - 1})">－</span>
+       <span class="circle">{{sku.attrData.num}}</span>
+       <span class="btn circle" @click="changeCar({sku, num: sku.attrData.num + 1})">＋</span>
      </div>
-     <div v-else-if="type == 0" class="btn addCar" @click="$emit('input', value + 1)">
+     <div v-else-if="type == 0" class="btn addCar" @click="changeCar({sku, num: sku.attrData.num + 1})">
        ＋ 加入购物车
      </div>
-     <div v-else-if="type == 1" class="btn circle" @click="$emit('input', value + 1)">
+     <div v-else-if="type == 1" class="btn circle" @click="changeCar({sku, num: sku.attrData.num + 1})">
        <span>＋</span>
      </div>
   </div>
 </template>
 
 <script>
+import {mapActions, mapState} from "vuex";
 
 export default {
   name: 'Input',
@@ -23,9 +24,8 @@ export default {
       type: String,
       default: "0"
     },
-    value: {
-      type: Number,
-      default: 0,
+    sku: {
+      type: Object,
     }
   },
   data () {
@@ -33,6 +33,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      "changeCar"
+    ]),
   }
 }
 </script>

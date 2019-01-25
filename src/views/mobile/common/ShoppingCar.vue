@@ -2,8 +2,11 @@
   <div class="carView" :class="{show: showPop}" @click="showPop = false">
     <ul class="skuList" @click.stop="">
       <li v-for="(sku, index) in shoppingCar" :key="index">
-        <span>{{sku.name}}</span>
-        <Add :value="sku.attrData.num" @input="e => input(e, sku)"/>
+        <div>
+          <div>{{sku.name}}</div>
+          <div class="sub">{{sku.attrData.name}}</div>
+        </div>
+        <Add :sku="sku"/>
       </li>
     </ul>
     <div class="bottom" v-if="shoppingCar.length > 0" @click.stop="showPop = !showPop">
@@ -54,15 +57,6 @@ export default {
         this.setData({showPop: false});
       }
       this.setData({total: total.toFixed(2)})
-    },
-    input (num, data) {
-      if (num > 3) {
-        data.attrData.num = 3;
-        this.$utils.toast("数量达到上限");
-        return ;
-      }
-      data.attrData.num = num;
-      this.changeCar(data);
     },
     toOrder () {
       this.$router.push("/m/orderon");
